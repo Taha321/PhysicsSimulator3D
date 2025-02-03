@@ -50,34 +50,44 @@ int main(int argc, char** args) {
     Mesh cubeMesh = Mesh::Cube(renderer);
     cubeMesh.LoadMesh();
 
-    RigidBodyCuboid obj1(cubeMesh, 0.2, 100, 10, 200);
+    RigidBodyCuboid obj1(cubeMesh, 50, 100, 10, 200);
     obj1.GetMaterial().colour = Vec<4>({1,1,1,1});
     obj1.SetPosition(Vec<3> ({0,0,0}));
     //obj1.Rotate(Vec<3>({0,0,1}), PI/4);
-    obj1.SetAngularVelocity(Vec<3>({0.05,0.008,0}));
+    obj1.SetAngularVelocity(Vec<3>({2,0.001,0.001}));
 
     TimeProfiler timer;
     unsigned n = 1000;
     timer.Start();
     int i=0;
     while(true) {
-
         obj1.Step(5);
 
+    //  rendering
         renderer.DrawObject(obj1, mainCamera);        
         renderer.PresentFrame();
-        std::this_thread::sleep_for(std::chrono::milliseconds(5));
-        if(ProcessInput(mainCamera,window)==false) {
-            break;
-        }
-
-        //  Report average frame duration after "n" frames
+    
+    //  Report simulation status after "n" frames
         i %= n;
         if (i == 0) {
             timer.Check("Frame Time", n);
             timer.Start();
+            printf("Angular Momentum: ");
+            obj1.GetAngularMomentum().Print();
+            
+            printf("Angular Velocity: ");
+            obj1.GetAngularVelocity().Print();
+            printf("\n");
         }
         i++;
+    
+    //  limit CPU usage
+        std::this_thread::sleep_for(std::chrono::milliseconds(5));
+
+    //  process inputs: camera movement
+        if(ProcessInput(mainCamera,window)==false) {
+            break;
+        }
     }
 
     renderer.Cleanup();

@@ -14,11 +14,11 @@ public:
     RigidBody(RenderingFramework3D::Mesh& mesh, float mass, MathUtil::Vec<3> principalMomentsOfInertia);
     virtual ~RigidBody() {}
 
-    MathUtil::Vec<3> GetVelocity() const;
-    MathUtil::Vec<3> GetMomentum() const;
+    const MathUtil::Vec<3>& GetVelocity() const;
+    const MathUtil::Vec<3>& GetMomentum() const;
         
-    MathUtil::Vec<3> GetAngularVelocity() const;
-    MathUtil::Vec<3> GetAngularMomentum() const;
+    const MathUtil::Vec<3>& GetAngularVelocity() const;
+    const MathUtil::Vec<3>& GetAngularMomentum() const;
 
     void SetVelocity(const MathUtil::Vec<3>& velocity_mps);
     void SetAngularVelocity(const MathUtil::Vec<3>& velocity_radps);
@@ -28,9 +28,8 @@ public:
     void Step(float interval_ms);
 
 protected:
-    MathUtil::Matrix<4,4>& GetTransformInv();
+    MathUtil::Matrix<3,3>& GetTransformInv();
 
-private:
 	virtual void OnRescale(float x, float y, float z) override;
 	virtual void OnRotate(const MathUtil::Vec<3>& axis, float radians) override;
 	virtual void OnMove(const MathUtil::Vec<3>& position) override;
@@ -45,15 +44,15 @@ protected:
     MathUtil::Vec<3> _velocity;
     MathUtil::Vec<3> _momentum;
     
-    MathUtil::Vec<4> _angular_velocity_b;
+    MathUtil::Vec<3> _angular_velocity_b;
     MathUtil::Vec<3> _angular_velocity_i;
-    MathUtil::Vec<4> _angular_momentum;
+    MathUtil::Vec<3> _angular_momentum;
 
     float _mass;
     MathUtil::Vec<3> _rot_inertia;
 
     bool _transform_inv_update;
-    MathUtil::Matrix<4,4> _transform_inv;
+    MathUtil::Matrix<3,3> _transform_inv;
 
     std::queue<ForceEntry> _pending_forces;
 };
